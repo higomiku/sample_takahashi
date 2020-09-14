@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'next_page.dart';
+
+import 'package:assets_audio_player/assets_audio_player.dart';
+
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -51,6 +57,77 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  List<String> titleList = ['Amazon', '楽天', 'Yahoo!'];
+  AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  @override
+  void initState() {
+    super.initState();
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('app_icon');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  void loadSE() {
+    _assetsAudioPlayer.open(
+      Audio("assets/door_chime0.mp3"),
+    );
+  }
+
+  void playSE() {
+    _assetsAudioPlayer.play();
+    // print("playSE is called");
+  }
+
+  //定時実行バックグランド起動のスクリプト記述
+  // Future _showNotification() async {
+  //   var time = new Time(22, 40, 0);
+  //   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+  //       'your channel id', 'your channel name', 'your channel description',
+  //       importance: Importance.Max, priority: Priority.High);
+  //   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+  //   var platformChannelSpecifics = new NotificationDetails(
+  //       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  //   await flutterLocalNotificationsPlugin.showDailyAtTime(
+  //     0,
+  //     'Timer',
+  //     'You should check the app',
+  //     time,
+  //     platformChannelSpecifics,
+  //     payload: 'Default_Sound',
+  //   );
+  // }
+
+  //X分後に実行するメソッド
+  Future _showNotification() async {
+    var scheduledNotificationDateTime =
+        new DateTime.now().add(new Duration(seconds: 5));
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your other channel id', 'channel name', 'channelDescription');
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    print("showNotification started");
+    // await flutterLocalNotificationsPlugin.schedule(
+    //     0,
+    //     'scheduled title',
+    //     'scheduled body',
+    //     scheduledNotificationDateTime,
+    //     platformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
+        'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
+  }
+
+  void _setScheduler() {
+    _showNotification();
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -75,40 +152,37 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        //title: Text(widget.title),
+        title: Text("パスワード管理"),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      body: ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return Column(children: <Widget>[
+            ListTile(
+                leading: Icon(Icons.security),
+                title: Text(titleList[index]),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => NextPage(titleList[index])));
+                }),
+            Divider(),
+          ]);
+        },
+        itemCount: titleList.length,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          // loadSE();
+          // playSE();
+          // titleList.clear();
+          //titleList.add('Google');
+          //setState(() {});
+          print("onPressed started");
+          _setScheduler();
+          // print(titleList);
+        },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
