@@ -109,18 +109,18 @@ class _MyHomePageState extends State<MyHomePage> {
   // }
 
   //即時で通知を出すメソッド
-  Future _showNotification() async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  // Future _showNotification() async {
+  //   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+  //       'your channel id', 'your channel name', 'your channel description',
+  //       importance: Importance.Max, priority: Priority.High);
+  //   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  //   var platformChannelSpecifics = NotificationDetails(
+  //       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
-    await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item id 2');
-  }
+  //   await flutterLocalNotificationsPlugin.show(
+  //       0, 'plain title', 'plain body', platformChannelSpecifics,
+  //       payload: 'item id 2');
+  // }
 
   //X分後に実行するメソッド **時間のタイムゾーンがおかしい
   // Future _showNotification() async {
@@ -148,19 +148,19 @@ class _MyHomePageState extends State<MyHomePage> {
   // }
 
   //サンプルコード②を参照＝＞成功！！
-  // Future _showNotification() async {
-  //   var time = Time(14, 55, 0);
-  //   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-  //       'your other channel id', 'channel name', 'channelDescription');
-  //   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-  //   NotificationDetails platformChannelSpecifics = new NotificationDetails(
-  //       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-  //   print("showNotification started");
-  //   print(DateTime.now().toString());
-  //   print(time.hour.toString() + ":" + time.minute.toString());
-  //   await flutterLocalNotificationsPlugin.showDailyAtTime(
-  //       0, 'repeating title', 'repeating body', time, platformChannelSpecifics);
-  // }
+  Future _showNotification() async {
+    var time = Time(15, 10, 0);
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your other channel id', 'channel name', 'channelDescription');
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    print("showNotification started");
+    print(DateTime.now().toString());
+    print(time.hour.toString() + ":" + time.minute.toString());
+    await flutterLocalNotificationsPlugin.showDailyAtTime(
+        0, 'repeating title', 'repeating body', time, platformChannelSpecifics);
+  }
 
   //
   // Future _showNotification() async {
