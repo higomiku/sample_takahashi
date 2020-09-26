@@ -55,12 +55,20 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+class NotificationContent {
+  var androidPlatformChannelSpecifics;
+  var iOSPlatformChannelSpecifics;
+  NotificationDetails platformChannelSpecifics;
+}
+
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  List<String> titleList = ['Amazon', '楽天', 'Yahoo!'];
+  // int _counter = 0;
+  // List<String> titleList = ['Amazon', '楽天', 'Yahoo!'];
   AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  var notificationContent = new NotificationContent();
 
   @override
   void initState() {
@@ -85,91 +93,50 @@ class _MyHomePageState extends State<MyHomePage> {
     // print("playSE is called");
   }
 
-  //定時実行バックグランド起動のスクリプト記述
-  // Future _showNotification() async {
-  //   var time = new Time(15, 30, 0);
-  //   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-  //       'your channel id', 'your channel name', 'your channel description',
-  //       importance: Importance.Max, priority: Priority.High);
-  //   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-  //   var platformChannelSpecifics = new NotificationDetails(
-  //       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-  //   print("_showNotification start");
-  //   print(time.hour.toString());
-  //   print("now :" + DateTime.now().toString());
-  //   await flutterLocalNotificationsPlugin.showDailyAtTime(
-  //     0,
-  //     'Timer',
-  //     'You should check the app',
-  //     time,
-  //     platformChannelSpecifics,
-  //     payload: 'Default_Sound',
-  //   );
-  //   print(flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails());
-  // }
+  NotificationContent pepareForNotificationContent() {
+    var tmpNotificationContent = new NotificationContent();
+    tmpNotificationContent.androidPlatformChannelSpecifics =
+        new AndroidNotificationDetails(
+            'your other channel id', 'channel name', 'channelDescription');
+    tmpNotificationContent.iOSPlatformChannelSpecifics =
+        new IOSNotificationDetails();
+    tmpNotificationContent.platformChannelSpecifics = new NotificationDetails(
+        tmpNotificationContent.androidPlatformChannelSpecifics,
+        tmpNotificationContent.iOSPlatformChannelSpecifics);
+
+    return tmpNotificationContent;
+  }
 
   //即時で通知を出すメソッド
   // Future _showNotification() async {
-  //   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-  //       'your channel id', 'your channel name', 'your channel description',
-  //       importance: Importance.Max, priority: Priority.High);
-  //   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-  //   var platformChannelSpecifics = NotificationDetails(
-  //       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-
-  //   await flutterLocalNotificationsPlugin.show(
-  //       0, 'plain title', 'plain body', platformChannelSpecifics,
+  // notificationContent = pepareForNotificationContent();
+  // await flutterLocalNotificationsPlugin.show(
+  //       0, 'plain title', 'plain body',notificationContent.platformChannelSpecifics,
   //       payload: 'item id 2');
   // }
 
   //X分後に実行するメソッド **時間のタイムゾーンがおかしい
   // Future _showNotification() async {
-  //   var scheduledNotificationDateTime =
-  //       new DateTime.now().add(new Duration(seconds: 5));
-  //   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-  //       'your other channel id', 'channel name', 'channelDescription');
-  //   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-  //   NotificationDetails platformChannelSpecifics = new NotificationDetails(
-  //       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-  //   print("showNotification started");
-  //   print(DateTime.now().toString());
-  //   print(RepeatInterval.EveryMinute.index);
-  //print(scheduledNotificationDateTime.toString());
-  //   await flutterLocalNotificationsPlugin.schedule(
-  //       0,
-  //       'scheduled title',
-  //       'scheduled body',
-  //       scheduledNotificationDateTime,
-  //       platformChannelSpecifics);
-  // }
-
+  // notificationContent = pepareForNotificationContent();
   //   await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
   //       'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
   // }
 
   //サンプルコード②を参照＝＞成功！！
   Future _showNotification() async {
-    var time = Time(15, 10, 0);
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-        'your other channel id', 'channel name', 'channelDescription');
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var time = Time(13, 03, 0);
+    notificationContent = pepareForNotificationContent();
     print("showNotification started");
     print(DateTime.now().toString());
     print(time.hour.toString() + ":" + time.minute.toString());
-    await flutterLocalNotificationsPlugin.showDailyAtTime(
-        0, 'repeating title', 'repeating body', time, platformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showDailyAtTime(0, 'repeating title',
+        'repeating body', time, notificationContent.platformChannelSpecifics);
   }
 
   //
   // Future _showNotification() async {
   //   var time = Time(14, 55, 0);
-  //   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-  //       'your other channel id', 'channel name', 'channelDescription');
-  //   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-  //   NotificationDetails platformChannelSpecifics = new NotificationDetails(
-  //       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  // notificationContent = pepareForNotificationContent();
   //   print("showNotification started");
   //   print(DateTime.now().toString());
   //   print(time.hour.toString() + ":" + time.minute.toString());
@@ -179,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //       'scheduled title',
   //       'scheduled body',
   //       scheduledNotificationDateTime,
-  //       platformChannelSpecifics);
+  //       notificationContent.platformChannelSpecifics);
   // }
 
   //通知をクリックした時の動作を定義するメソッドらしい。
@@ -196,17 +163,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _showNotification();
   }
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -220,25 +176,25 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         //title: Text(widget.title),
-        title: Text("パスワード管理"),
+        title: Text("アラーム機能"),
       ),
-      body: ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          return Column(children: <Widget>[
-            ListTile(
-                leading: Icon(Icons.security),
-                title: Text(titleList[index]),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NextPage(titleList[index])));
-                }),
-            Divider(),
-          ]);
-        },
-        itemCount: titleList.length,
-      ),
+      // body: ListView.builder(
+      //   itemBuilder: (BuildContext context, int index) {
+      //     return Column(children: <Widget>[
+      //       ListTile(
+      //           leading: Icon(Icons.security),
+      //           title: Text(titleList[index]),
+      //           onTap: () {
+      //             Navigator.push(
+      //                 context,
+      //                 MaterialPageRoute(
+      //                     builder: (context) => NextPage(titleList[index])));
+      //           }),
+      //       Divider(),
+      //     ]);
+      //   },
+      //   itemCount: titleList.length,
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // loadSE();
