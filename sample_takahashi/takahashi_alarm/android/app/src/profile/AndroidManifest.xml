@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!--以下はAudioRecorderプラグインの定義-->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--ここまで-->
     
     <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
         <intent-filter>
